@@ -141,7 +141,8 @@ func updateCode() error {
 	if err != nil {
 		return err
 	}
-	cmd := exec.Command("/bin/bash", "-c", getConfigStr("CodeVcs", "Cmd")+" "+getConfigStr("Project", "Path"))
+	// cmd := exec.Command("/bin/bash", "-c", getConfigStr("CodeVcs", "Cmd")+" "+getConfigStr("Project", "Path"))
+	cmd := exec.Command("/bin/bash", "-c", "\"", "cd", getConfigStr("Project", "Path"), "&&", getConfigStr("CodeVcs", "Cmd"), "\"")
 	uid, _ := strconv.Atoi(user.Uid)
 	gid, _ := strconv.Atoi(user.Gid)
 	cmd.SysProcAttr = &syscall.SysProcAttr{}
