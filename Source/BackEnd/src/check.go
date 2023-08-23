@@ -9,12 +9,12 @@ import (
 	"log"
 	"os"
 	"os/exec"
-	"os/user"
+	// "os/user"
 	"sort"
-	"strconv"
+	// "strconv"
 	"strings"
 	"sync"
-	"syscall"
+	// "syscall"
 	"time"
 )
 
@@ -137,21 +137,13 @@ func callScan(localTime time.Time) {
 }
 
 func updateCode() error {
-	user, err := user.Lookup(getConfigStr("CodeVcs", "User"))
-	if err != nil {
-		return err
-	}
-	// cmd := exec.Command("/bin/bash", "-c", getConfigStr("CodeVcs", "Cmd")+" "+getConfigStr("Project", "Path"))
-	cmd := exec.Command("/bin/bash", "-c", "\"", "cd", getConfigStr("Project", "Path"), "&&", getConfigStr("CodeVcs", "Cmd"), "\"")
-	uid, _ := strconv.Atoi(user.Uid)
-	gid, _ := strconv.Atoi(user.Gid)
-	cmd.SysProcAttr = &syscall.SysProcAttr{}
-	cmd.SysProcAttr.Credential = &syscall.Credential{Uid: uint32(uid), Gid: uint32(gid)}
+	cmd := exec.Command("/bin/bash", "-c", getConfigStr("CodeVcs", "Cmd"))
+	cmd.Dir = getConfigStr("Project", "Path")
 	output, err := cmd.Output()
+	log.Println(string(output))
 	if err != nil {
 		return err
 	}
-	log.Println(string(output))
 	return nil
 }
 

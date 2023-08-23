@@ -61,34 +61,32 @@ var resultVue = new Vue({
 		}
 	},
 	watch:{
-		tmpResults:function(value){
+		tmpResults: function (value) {
+			$('#tabletable').bootstrapTable('removeAll')
 			this.results = []
 			if(!value){
 				console.log("tmpResults null")
 				return
 			}
-			console.log("tmplength:",value.length)
+			console.log("tmplength:", value.length)
+			
+			var rows = []
+
 			for(i = 0; i < value.length; ++i){
 				var arr = pattern.exec(value[i])
-				var tmp = {}
-				if(arr){
-					tmp["file"] = arr[1]
-					tmp["level"] = arr[2]
-					tmp["info"] = arr[3]
-					switch(arr[2])
-					{
-						case "Critical":tmp["type"] = 1; break; // 1:red 2:blue 3:yellow 4:green
-						case "Serious":tmp["type"] = 2; break;
-						case "Warning":tmp["type"] = 3; break;
-						case "Information":tmp["type"] = 4; break;
-						default:tmp["type"] = 0;
-					}
+				console.log(arr)
+				if (arr) {
+					rows.push({
+						id: i+1,
+						level: arr[2],
+						file: arr[1],
+						info: arr[3]
+					})
 				}
-				else{
-					tmp["info"] = value[i]
-				}
-				this.results.push(tmp)
 			}
+
+			console.log(rows)
+			$('#tabletable').bootstrapTable('load', rows)
 		}
 	}
 });
@@ -103,11 +101,15 @@ var optionVue = new Vue({
 		makeSelect:function(value){
 			if(value == 1){
 				this.selected = "昨日新增";
+				$("#zuori").addClass("active");
+				$("#quanbu").removeClass("active");
 				pagVue.selectDate(0)
 				$("#pag").show();
 			}
 			else if(value == 2){
 				this.selected = "全部";
+				$("#quanbu").addClass("active");
+				$("#zuori").removeClass("active");
 				resultVue.getAllResult()
 				$("#pag").hide();
 			}
@@ -151,3 +153,48 @@ var pagVue = new Vue({
 	}
 });
 
+
+$(document).ready(function () {
+	$('#table').bootstrapTable();
+});
+
+function cellStyle(value, row, index) {
+	var classes = [
+		'bg-blue',
+		'bg-green',
+		'bg-orange',
+		'bg-yellow',
+		'bg-red'
+	]
+
+	if (value == 'Warning') {
+		return {
+			classes: "table-warning"
+		}
+	}
+	if (value == 'Critical') {
+		return {
+			classes: "table-danger"
+		}
+	}
+	if (value == 'Serious') {
+		return {
+			classes: "table-info"
+		}
+	}
+	if (value == 'Information') {
+		return {
+			classes: "table-success"
+		}
+	}
+	return {
+	}
+}
+
+function normalcellStyle(value, row, index) {
+	return {
+		css: {
+			style:"word-wrap:break-word; word-break:break-all"
+		}
+	}
+}

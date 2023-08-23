@@ -4,14 +4,15 @@
 	cursor: default;
 }
 
-.mybtn:active
+/* .mybtn:active
 {
 	box-shadow: none;
-}
+} */
 
 .table
 {
-	margin-top:60px;
+	margin-top:70px;
+	/* table-layout: fixed; */
 }
 
 .btnfix
@@ -25,15 +26,15 @@
 	margin-left:20px;
 }
 
-.pagination li a
+/* .pagination li a
 {
-	color:#333;
-}
+	color:#6e6e6e;
+} */
 
-.pagination > li > a:focus
+/* .pagination > li > a:focus
 {
-	background-color:#fff;
-}
+	background-color:#818181;
+} */
 
 .margintop
 {

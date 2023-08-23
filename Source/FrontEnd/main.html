@@ -1,69 +1,93 @@
 <!DOCTYPE html>
-<html>
+<html data-bs-theme="dark">
 	<head>
 		<meta charset="utf-8">
 		<title>代码检查结果</title>
 		<link rel="stylesheet" type="text/css" href="../../Plugin/Bootstrap/css/bootstrap.min.css">
+		<link rel="stylesheet" type="text/css" href="../../Plugin/BootstrapTable/bootstrap-table.min.css">
+
 		<link rel="stylesheet" type="text/css" href="../FrontEnd/main.css">
-		<script type="text/javascript" src="../../Plugin/jquery/jquery-3.2.1.min.js"></script>
+		<script type="text/javascript" src="../../Plugin/jquery/jquery-3.7.0.min.js"></script>
 		<script type="text/javascript" src="../../Plugin/Bootstrap/js/bootstrap.min.js"></script>
+		<script type="text/javascript" src="../../Plugin/BootstrapTable/bootstrap-table.min.js"></script>
 		<script type="text/javascript" src="../../Plugin/Vuejs/vue.min.js"></script>
 		<script type="text/javascript" src="../../Plugin/Axios/axios.min.js"></script>
 	</head>
 	<body>
-		<div class="container">
-			<div class="row clearfix">
-				<div class="col-md-12 column">
-					<div class="page-header">
-						<h1> 服务器代码检查</h1>
+
+		<div class="container-fluid">
+			<nav class="navbar fixed-top navbar-expand navbar-dark bg-dark" aria-label="Second navbar example" style="z-index: 1000;">
+				<div class="container-fluid">
+					<a class="navbar-brand" href="#">hunter1服务器代码检查</a>
+					<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsExample02"
+						aria-controls="navbarsExample02" aria-expanded="false" aria-label="Toggle navigation">
+						<span class="navbar-toggler-icon"></span>
+					</button>
+			
+					<div class="collapse navbar-collapse" id="navbarsExample02">
+						<ul class="navbar-nav me-auto" id="option">
+							<li class="nav-item">
+								<a id="zuori" class="nav-link active" aria-current="page" href="#"
+									v-on:click="makeSelect(1)">昨日新增</a>
+							</li>
+							<li class="nav-item">
+								<a id="quanbu" class="nav-link" href="#" v-on:click="makeSelect(2)">全部</a>
+							</li>
+						</ul>
+			
+						<ul class="pagination" id="pag">
+							<li>
+								<a type="button" v-bind:class="disable==1||disable==3?'btn disabled disbtn btn-dark':'btn btn-secondary'" href="#"
+									v-on:click="selectDate(-1)">Prev</a>
+							</li>
+							<li>
+								<a type="button" class="btn disabled" href="#">[[date]]</a>
+							</li>
+							<li>
+								<a type="button" v-bind:class="disable==2||disable==3?'btn disabled disbtn btn-dark':'btn btn-secondary'" href="#"
+									v-on:click="selectDate(1)">Next</a>
+							</li>
+						</ul>
+			
 					</div>
-					<div class="row clearfix margintop">
-						<div class="col-md-2">
-							<div class="btn mybtn">选项：</div>
-							<div class="btn-group" id="option">
-								<button class="btn btn-default btnfix" id="show-type">[[selected]]</button><button data-toggle="dropdown" class="btn btn-default dropdown-toggle"><span class="caret"></span></button>
-								<ul class="dropdown-menu" v-on:click.prevent>
-									<li> <a href="#" v-on:click="makeSelect(1)">昨日新增</a> </li>
-									<li> <a href="#" v-on:click="makeSelect(2)">全部</a> </li>
-								</ul>
-							</div>
-						</div>
-						<div class="col-md-3" id="pag">
-								<ul class="pagination">
-									<li>
-										<a v-bind:class="disable==1||disable==3?'btn disabled disbtn':''" href="#" v-on:click="selectDate(-1)">Prev</a>
-									</li>
-									<li>
-										<a class="btn disabled" href="#">[[date]]</a>
-									</li>
-									<li>
-										<a v-bind:class="disable==2||disable==3?'btn disabled disbtn':''" href="#" v-on:click="selectDate(1)">Next</a>
-									</li>
-								</ul>
-						</div>
-					<div id="result" v-cloak>
-						<table class="table table-hover">
-							<thead>
-								<tr>
-									<th></th>
-									<th>文件</th>
-									<th>异常</th>
-									<th>级别</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr v-for="(tmp,index) in results" v-bind:class="[tmp.type==1?'danger':'',tmp.type==2?'info':'',tmp.type==3?'warning':'',tmp.type==4?'success':'']">
-									<td>[[index+1]].</td>
-									<td>[[tmp.file]]</td>
-									<td>[[tmp.info]]</td>
-									<td>[[tmp.level]]</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-					<script type="text/javascript" src="../FrontEnd/main.js"></script>
 				</div>
+			</nav>
+
+			<!-- <div class="fixed-top" style="z-index: 30;">
+				<table class="table table-hover">
+					<thead>
+						<tr>
+							<th scope="col" class="sortable" width="50">序号</th>
+							<th scope="col" class="sortable" width="90">级别</th>
+							<th scope="col" class="sortable" width="350">文件</th>
+							<th>异常</th>
+						</tr>
+					</thead>
+				</table>
+			</div> -->
+
+			<div id="result" v-cloak style="z-index: 0;">
+				<table id="tabletable" data-toggle="table" class="table table-hover" data-sortable="true">
+					<thead>
+						<tr>
+							<th data-field="id" data-sortable="true" width="50">序号</th>
+							<th data-field="level" data-sortable="true" width="90" data-cell-style="cellStyle">级别</th>
+							<th data-field="file" data-sortable="true" width="350" data-cell-style="normalcellStyle">文件</th>
+							<th data-field="info" data-cell-style="normalcellStyle">异常</th>
+						</tr>
+					</thead>
+					<!-- <tbody>
+						<tr v-for="(tmp,index) in results"
+							v-bind:class="[tmp.type==1?'table-danger':'',tmp.type==2?'table-info':'',tmp.type==3?'table-warning':'',tmp.type==4?'table-success':'']">
+							<td style="text-align: center; word-wrap:break-word; word-break:break-all">[[index+1]]</td>
+							<td style="word-wrap:break-word; word-break:break-all">[[tmp.level]]</td>
+							<td style="word-wrap:break-word; word-break:break-all">[[tmp.file]]</td>
+							<td style="word-wrap:break-word; word-break:break-all">[[tmp.info]]</td>
+						</tr>
+					</tbody> -->
+				</table>
 			</div>
+			<script type="text/javascript" src="../FrontEnd/main.js"></script>
 		</div>
 	</body>
 </html>
